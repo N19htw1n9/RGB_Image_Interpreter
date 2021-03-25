@@ -26,9 +26,7 @@ void setup()
   Serial.println(WiFi.localIP());
 
   server.on("/",[](){server.send(200,"text/plain","Hello World!");});
-  server.on("/toggle",toggleLED);
   server.on("/jblink",jBlinkLED);
-  server.on("/qblink",qBlinkLED);
   server.begin();
 }
 
@@ -44,17 +42,10 @@ void RGB_color(int red_light_value, int green_light_value, int blue_light_value)
   analogWrite(blue_led, blue_light_value);
 }
 
-void toggleLED()
-{
-  //digitalWrite(pin_led,!digitalRead(pin_led));
-  server.send(204,"");
-}
-
 void jBlinkLED()
 {
   String data = server.arg("plain");
   StaticJsonDocument<200> doc;
-  // jBuffer.parseObject(data);
   deserializeJson(doc, data);
   JsonObject jObject = doc.as<JsonObject>();
   String red = jObject["r"];
@@ -65,15 +56,4 @@ void jBlinkLED()
   
 
   server.send(200,"text/plain","GOT THE DATA!"); 
-}
-
-void qBlinkLED()
-{
-  String del = server.arg("pause");
-  String n = server.arg("times");
-  for (int i=0; i<n.toInt();i++)
-  {
-   //digitalWrite(pin_led,!digitalRead(pin_led));
-   delay(del.toInt()); 
-  }
 }
