@@ -3,28 +3,25 @@
 #include <ESP8266WebServer.h>
 
 ESP8266WebServer server;
-uint8_t red_led = D2;
-uint8_t blue_led = D0;
-uint8_t green_led = D1;
+//this is private anyways, but don't forget to obscure this if the code ever goes public
 const char* ssid = "HOME-C98C";  // Enter SSID here
 const char* password = "642362C2EE97C74D";  //Enter Password here
 
 void setup()
 {
-  pinMode(red_led, OUTPUT);
-  pinMode(blue_led, OUTPUT);
-  pinMode(green_led, OUTPUT);
   WiFi.begin(ssid,password);
   Serial.begin(115200);
+  //because Serial gets occupied with the USB (needed to know the wi-fi address), use Serial2 to communicate with UNO
+ // Serial2.begin(115200);
   while(WiFi.status()!=WL_CONNECTED)
   {
     Serial.print(".");
     delay(500);
   }
-  Serial.println("");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
-
+  //Serial.println("");
+  //Serial.print("IP Address: ");
+  //Serial.println(WiFi.localIP());
+  //add a new action to the server as a specific command is requested
   server.on("/",[](){server.send(200,"text/plain","Hello World!");});
   server.on("/jblink",jBlinkLED);
   server.begin();
@@ -32,28 +29,17 @@ void setup()
 
 void loop()
 {
+  //let the server handle connections
   server.handleClient();
 }
 
-void RGB_color(int red_light_value, int green_light_value, int blue_light_value)
- {
-  analogWrite(red_led, red_light_value);
-  analogWrite(green_led, green_light_value);
-  analogWrite(blue_led, blue_light_value);
-}
 
 void jBlinkLED()
 {
+  //get date from the wi-fi connection
   String data = server.arg("plain");
-  StaticJsonDocument<200> doc;
-  deserializeJson(doc, data);
-  JsonObject jObject = doc.as<JsonObject>();
-  String red = jObject["r"];
-  String blue = jObject["b"];
-  String green = jObject["g"];
-  
-  RGB_color(red.toInt(), green.toInt(), blue.toInt());
-  
-
+  //send it to the UNO via the serial
+  Serial.println(data);
+  //tell the server that the data was received
   server.send(200,"text/plain","GOT THE DATA!"); 
 }
