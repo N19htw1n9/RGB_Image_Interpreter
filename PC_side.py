@@ -14,6 +14,8 @@ filename = input("Enter the name of the image (if it is in the same folder) or a
 common_colors = freqPixelRGB(filename)
 url_json = 'http://10.0.0.241/jblink'   
 headers={'Content-Type': 'application/json; charset=UTF-8'}
+#send an invalid json so arduino clears out old colors
+response, content = http.request(url_json, 'POST', headers=headers, body="update")
 for x in common_colors:
 #create a dictionary with a color
   data = {
@@ -31,7 +33,7 @@ for x in common_colors:
 
 if 0:
   url_json = 'http://10.0.0.241/jblink'   
-  data = {'r': '0', 'g': '0', 'b': '100'}
+  data = {'r': '0', 'g': '0', 'b': '0'}
   headers={'Content-Type': 'application/json; charset=UTF-8'}
   response, content = http.request(url_json, 'POST', headers=headers, body=json.dumps(data))
   print(response)

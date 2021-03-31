@@ -14,6 +14,7 @@ const int rs = 7, en = 8, d4 = 5, d5 = 4, d6 = 9, d7 = 12;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 int colorCount = 0;
 int curColor = 0;
+bool pressed = false;
 
 //store all the received colors in an array
 struct color{
@@ -26,25 +27,29 @@ struct color{
 
 //display the next color. If the last color is reached, go back to the first one
 void skipAhead(){
-  if (millis() - pressTimeA > debounce)
+  if (millis() - pressTimeA > debounce && !pressed)
   {
+    pressed = true;
     curColor++;
     if (curColor == colorCount) curColor = 0;
     lcd_color_print(colorArr[curColor].red, colorArr[curColor].green, colorArr[curColor].blue);
     RGB_color(colorArr[curColor].red, colorArr[curColor].green, colorArr[curColor].blue);
     pressTimeA = millis();
+    pressed = false;
   }
 }
 
 //display the previous color. If the first color is reached, go back to the last one
 void skipBack(){
-  if (millis() - pressTimeB > debounce)
+  if (millis() - pressTimeB > debounce && !pressed)
   {
+    pressed = true;
     curColor--;
     if (curColor < 0) curColor = colorCount - 1;
     lcd_color_print(colorArr[curColor].red, colorArr[curColor].green, colorArr[curColor].blue);
     RGB_color(colorArr[curColor].red, colorArr[curColor].green, colorArr[curColor].blue);
     pressTimeB = millis();
+    pressed = false;
   }
 }
 
@@ -100,7 +105,10 @@ void loop() {
       StaticJsonDocument<200> doc;
       deserializeJson(doc, data);
       JsonObject jObject = doc.as<JsonObject>();
-      if (jObject.isNull()) return;
+      //if the object was invalid, take it as a signal to clear colors
+      if (jObject.isNull()){  
+        curColor = colorCount = 0;
+        return; }
       String red = jObject["r"];
       String blue = jObject["b"];
       String green = jObject["g"];
