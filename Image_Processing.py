@@ -55,7 +55,7 @@ def freqPixelRGB(path):
     # to prepare for the next iteration
     else:
       del freqList[maxVal]
-  
+  print("Image Processed")
   return valList
 
 '''
@@ -119,4 +119,4 @@ def isDark(val):
   return False
 
 # For testing
-print(freqPixelRGB('butterfly.jpg'))
+# print(freqPixelRGB('butterfly.jpg'))
