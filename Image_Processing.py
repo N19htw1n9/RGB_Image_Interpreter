@@ -38,7 +38,8 @@ def freqPixelRGB(path):
   valList = []
   while count < 5:
     maxVal = max(freqList, key = freqList.get)
-    if establishThreshold(valList, maxVal) == True:
+    if (establishThreshold(valList, maxVal) == True
+        and isGrayOrBlack(maxVal) == False):
       valList.append(maxVal)
       del freqList[maxVal]
       count += 1
@@ -83,8 +84,17 @@ def checkVariance(val1, val2):
   
   return False
 
-def excludeGrayAndBlack(val):
-  pass
+def isGrayOrBlack(val):
+  if (val[0] == val[1] and val[1] == val[2]):
+    return True
+  elif (abs(val[0] - val[1]) <= 16 and val[1] == val[2]):
+    return True
+  elif (val[0] == val[1] and abs(val[1] - val[2]) <= 16 ):
+    return True
+  elif (val[0] == val[2] and abs(val[2] - val[1]) <= 16 ):
+    return True
+  
+  return False
 
 # For testing
 print(freqPixelRGB('butterfly.jpg'))
