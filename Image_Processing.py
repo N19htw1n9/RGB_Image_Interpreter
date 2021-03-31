@@ -17,6 +17,10 @@ https://pillow.readthedocs.io/en/stable/reference/Image.html
 import PIL
 from PIL import Image
 
+'''
+Processes image and returns the
+5 most frequently occurring RGB values
+'''
 def freqPixelRGB(path):
   
   img = Image.open(path)
@@ -33,12 +37,54 @@ def freqPixelRGB(path):
   count = 0
   valList = []
   while count < 5:
-    maxKey = max(freqList, key = freqList.get)
-    valList.append(maxKey)
-    del freqList[maxKey]
-    count += 1
+    maxVal = max(freqList, key = freqList.get)
+    if establishThreshold(valList, maxVal) == True:
+      valList.append(maxVal)
+      del freqList[maxVal]
+      count += 1
+    
+    else:
+      del freqList[maxVal]
   
   return valList
 
+'''
+Checks each element of the list and compares
+to a set of RGB values. Returns true if it follows
+the 10% variance methodology and false otherwise
+'''
+def establishThreshold(li, val):
+  ret = True
+  
+  if len(li) == 0:
+    return True
+  
+  for k in li:
+    if checkVariance(k, val) == False:
+      ret = False
+  
+  return ret
+
+'''
+Compares two sets of RGB values and returns
+True if their variance is equal to or greater
+than 10% higher OR equal to or less than 10% lower
+'''
+def checkVariance(val1, val2):
+  if ((int(val1[0] * 0.9) >= val2[0])
+      and (int(val1[1] * 0.9) >= val2[1])
+      and (int(val1[2] * 0.9) >= val2[2])):
+    return True
+  
+  elif ((int(val1[0] * 1.1) <= val2[0])
+      and (int(val1[1] * 1.1) <= val2[1])
+      and (int(val1[2] * 1.1) <= val2[2])):
+    return True
+  
+  return False
+
+def excludeGrayAndBlack(val):
+  pass
+
 # For testing
-# print(freqPixelRGB('butterfly.jpg'))
+print(freqPixelRGB('butterfly.jpg'))
