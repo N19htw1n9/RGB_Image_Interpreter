@@ -100,6 +100,7 @@ void loop() {
       StaticJsonDocument<200> doc;
       deserializeJson(doc, data);
       JsonObject jObject = doc.as<JsonObject>();
+      if (jObject.isNull()) return;
       String red = jObject["r"];
       String blue = jObject["b"];
       String green = jObject["g"];

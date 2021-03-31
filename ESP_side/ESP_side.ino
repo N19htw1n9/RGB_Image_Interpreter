@@ -42,4 +42,5 @@ void jBlinkLED()
   Serial.println(data);
   //tell the server that the data was received
   server.send(200,"text/plain","GOT THE DATA!"); 
+  delay(1000);
 }
