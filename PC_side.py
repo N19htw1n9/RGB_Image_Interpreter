@@ -10,12 +10,12 @@ import httplib2
 http = httplib2.Http()
 #prompt user for the image name
 filename = input("Enter the name of the image (if it is in the same folder) or a path to it: ")
-#common_colors is now an array of five tripes with rgb values
-common_colors = freqPixelRGB(filename)
 url_json = 'http://10.0.0.241/jblink'   
 headers={'Content-Type': 'application/json; charset=UTF-8'}
 #send an invalid json so arduino clears out old colors
 response, content = http.request(url_json, 'POST', headers=headers, body="update")
+#common_colors is now an array of five tripes with rgb values
+common_colors = freqPixelRGB(filename)
 for x in common_colors:
 #create a dictionary with a color
   data = {

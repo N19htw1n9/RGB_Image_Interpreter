@@ -101,7 +101,6 @@ void loop() {
   // put your main code here, to run repeatedly:
    if (Serial.available()){
       String data = Serial.readString();  
-      Serial.println(data);
       StaticJsonDocument<200> doc;
       deserializeJson(doc, data);
       JsonObject jObject = doc.as<JsonObject>();
@@ -109,10 +108,13 @@ void loop() {
       if (jObject.isNull()){  
         curColor = colorCount = 0;
         return; }
+      //if valid, get the colors from it
       String red = jObject["r"];
       String blue = jObject["b"];
       String green = jObject["g"];
+      //add a new color to the array
       addColor(red.toInt(), green.toInt(), blue.toInt());
+      //display a new color
       curColor = colorCount-1;
       lcd_color_print(colorArr[curColor].red, colorArr[curColor].green, colorArr[curColor].blue);
       RGB_color(colorArr[curColor].red, colorArr[curColor].green, colorArr[curColor].blue);
